@@ -7,7 +7,7 @@ function Layout() {
     <div className="md:flex md:min-h-screen">
       <aside className="md:w-1/4 bg-blue-900 px-5 py-10">
         <h2 className="text-4xl font-black text-center text-white">
-          CRM - Clientes
+          CRM - Clients
         </h2>
         <nav>
           <Link
