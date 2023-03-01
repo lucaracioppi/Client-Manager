@@ -1,9 +1,27 @@
-import { useNavigate, Form, useActionData, redirect } from "react-router-dom";
+import {
+  Form,
+  useNavigate,
+  useLoaderData,
+  redirect,
+  useActionData,
+} from "react-router-dom";
+import { getClient } from "../data/clients";
 import Forms from "../components/Forms";
+import { editClients } from "../data/clients";
 import Error from "../components/Error";
-import { addClients } from "../data/clients";
 
-export async function action({ request }) {
+export async function loader({ params }) {
+  const client = await getClient(params.clientId);
+  if (Object.values(client).length === 0) {
+    throw new Response("", {
+      status: 404,
+      statusText: "Results not found",
+    });
+  }
+  return client;
+}
+
+export async function action({ request, params }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
@@ -26,17 +44,18 @@ export async function action({ request }) {
   if (Object.keys(errors).length) {
     return errors;
   }
-  await addClients(data);
+  await editClients(params.clientId, data);
   return redirect("/");
 }
 
-function NewClient() {
+export function EditClient() {
   const navigate = useNavigate();
+  const client = useLoaderData();
   const errors = useActionData();
   return (
     <div>
-      <h1 className="font-black text-4xl text-blue-900">New client</h1>
-      <p className="mt-3">fill in al the fields to register a new client</p>
+      <h1 className="font-black text-4xl text-blue-900">Edit client</h1>
+      <p className="mt-3">Now you can edit the fields</p>
 
       <div className="flex justify-end">
         <button
@@ -51,7 +70,7 @@ function NewClient() {
         {errors?.length &&
           errors.map((error, i) => <Error key={i}>{error}</Error>)}
         <Form method="post" noValidate>
-          <Forms />
+          <Forms client={client} />
           <input
             type="submit"
             className="mt-5 w-full bg-blue-800 p-3 uppercase font-bold text-white text-lg"
@@ -62,5 +81,3 @@ function NewClient() {
     </div>
   );
 }
-
-export { NewClient };
