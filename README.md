@@ -1,4 +1,4 @@
-# Administrador-de-clientes
+# Client-Manager
 Frontend repo | Client manager - made with React Router DOM and Tailwind
 
 Prerequisites
